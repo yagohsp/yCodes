@@ -12,4 +12,3 @@ create table comentario(
 	foreign key(idUsuario) references usuario(idUsuario),
 	comentario varchar(150) not null
 );
-

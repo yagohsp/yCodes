@@ -1,7 +1,8 @@
 var aText = new Array(
   "< yCodes />",
   "Bem Vindo",
-  "DESGRAAAAÇA"
+  "DESGRAAAAÇA",
+  "Muitos bugs"
 );
 var iSpeed = 100;
 var iIndex = 0;
@@ -10,6 +11,7 @@ var iTextPos = 0;
 var sContents = '';
 var destination = document.getElementById("typing");
 var y = 0;
+var user = null;
 
 function typeDelete() {
   if (y <= 3) {
@@ -55,8 +57,8 @@ $(".feedback-button").click(() => {
     $(".user-form").slideToggle();
     $("#content").delay(500).slideToggle();
     $("#feedback-button").html("Voltar");
-    
-  }else{
+
+  } else {
     $("#content").slideToggle();
     $(".user-form").delay(500).slideToggle();
     $("#feedback-button").html("Feedback Anônimo");
@@ -64,7 +66,7 @@ $(".feedback-button").click(() => {
 });
 
 
-$(document).on('click', '#newComment', function(e){
+$(document).on('click', '#newComment', function (e) {
   e.preventDefault(e);
   $.ajax({
     url: 'controller/commentController.php',
@@ -73,8 +75,19 @@ $(document).on('click', '#newComment', function(e){
       'newComment': 'newComment',
       'comment': $("#comment").val()
     },
-    success: function(data){
-      $('.feedback-box').append("<div><span>" + data + "</span></div>");
+    success: function (data) {
+      if (user) {
+        $('.feedback-box').append(
+          "<div><p style='font-size: 14px'>" + user + "</p>" +
+          "<span>" + data + "</span></div>"
+        );
+      } else {
+        $('.feedback-box').append(
+          "<div><p style='font-size: 14px'>Anônimo</p>" +
+          "<span>" + data + "</span></div>"
+        );
+      }
+
       $("#commentForm")[0].reset();
 
       let elem = document.getElementById("feedback-box");
@@ -86,7 +99,7 @@ $(document).on('click', '#newComment', function(e){
   });
 });
 
-$(document).on('click', '#userLogin', function(e){
+$(document).on('click', '#userLogin', function (e) {
   e.preventDefault();
   $.ajax({
     url: 'controller/userController.php',
@@ -96,28 +109,29 @@ $(document).on('click', '#userLogin', function(e){
       'user': $("#user").val(),
       'pass': $("#pass").val()
     },
-    success: function(data){
-      if(data === "1"){
+    success: function (data) {
+      if (data === "1") {
         $('#message').html("Logado com sucesso");
         $('#message').slideDown();
         $('#message').delay(2000).slideUp();
-      }else{
+        user = $("#user").val();
+        login();
+      } else {
         $('#message').html("Usuário incorreto");
         $('#message').slideDown();
         $('#message').delay(2000).slideUp();
       }
       $(".user-form")[0].reset();
     },
-    error: function(data){
+    error: function (data) {
       $('#message').html("Erro");
       $('#message').slideDown();
       $('#message').delay(2000).slideUp();
-      console.log(data);
     }
   });
 });
 
-$(document).on('click', '#userNew', function(e){
+$(document).on('click', '#userNew', function (e) {
   e.preventDefault();
   $.ajax({
     url: 'controller/userController.php',
@@ -127,12 +141,12 @@ $(document).on('click', '#userNew', function(e){
       'user': $("#user").val(),
       'pass': $("#pass").val()
     },
-    success: function(data){
-      if(data === "1"){
+    success: function (data) {
+      if (data === "1") {
         $('#message').html("Cadastrado com sucesso");
         $('#message').slideDown();
         $('#message').delay(2000).slideUp();
-      }else{
+      } else {
         $('#message').html("Usuário já existe");
         $('#message').slideDown();
         $('#message').delay(2000).slideUp();
@@ -142,8 +156,20 @@ $(document).on('click', '#userNew', function(e){
   });
 });
 
-
-
+function logout() {
+  window.location.href = 'controller/logout.php';
+}
+function login() {
+  aText.push(user);
+  $('#login-buttons').slideUp();
+  $('#user').slideUp();
+  $('#pass').slideUp();
+  $('#userNew').prop('disabled', true);
+  $('#userLogin').prop('disabled', true);
+  $('#userLogout').prop('disabled', false);
+  $('#logout-buttons').delay(1000).slideDown();
+  $("#feedback-button").html("Feedback");
+}
 // SQUARES
 
 var ulSquares = document.querySelector("ul.squares");
@@ -156,11 +182,14 @@ function newSquare() {
   const position = random(1, 99);
   const duration = random(3, 10);
 
-  if (random(1, 100) >= 98) {
+  if (random(1, 100) >= 95) {
     li = document.createElement("h1");
     li.innerHTML = "yCodes";
     li.style.transform = 'rotate(90deg)';
-
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () =>{
+      alert("easter egg, você ganhou um chocolate");
+    })
   } else {
     li = document.createElement("li");
     li.style.width = `${size}px`;

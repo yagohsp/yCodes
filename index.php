@@ -27,34 +27,54 @@ include('controller/commentController.php');
         </div>
 
         <form class="user-form">
-            <input type="text" id="user" placeholder="Usuário">
-            <input type="password" id="pass" placeholder="Senha">
-            <div class="account-buttons">
                 <?php
-                if(!isset($_SESSION['username'])){
+                 if(!isset($_SESSION['username'])){
+                    echo'<input type="text" id="user" placeholder="Usuário">';
+                    echo'<input type="password" id="pass" placeholder="Senha">';
+                    echo '<div id="login-buttons">';
                     echo '<button id="userLogin">Entrar</button>';
                     echo '<button id="userNew">Cadastrar</button>';
+                    echo '</div>';
+                    echo '<div id="logout-buttons" style="display: none">';
+                    echo '<button id="userLogout" onclick="logout()" disabled>Sair</button>';
+                    echo '</div>';
                 }else{
-                    echo '<button>Sair</button>';
-                }
+                    echo'<input type="text" id="user" placeholder="Usuário" style="display: none">';
+                    echo'<input type="password" id="pass" placeholder="Senha" style="display: none">';
+                    echo '<div id="login-buttons" style="display: none">';
+                    echo '<button id="userLogin" disabled>Entrar</button>';
+                    echo '<button id="userNew" disabled>Cadastrar</button>';
+                    echo '</div>';
+                    echo '<div id="logout-buttons">';
+                    echo '<button onclick="logout()">Sair</button>';
+                    echo '</div>';
+                } 
                 ?>
-                
-                
-            </div>
         </form>
-
-        <button class="feedback-button" id="feedback-button">Feedback anônimo</button>
-
+        <?php 
+            if(isset($_SESSION['username'])){
+                echo'<button class="feedback-button" id="feedback-button">Feedback</button>';
+            }else{
+                echo'<button class="feedback-button" id="feedback-button">Feedback Anônimo</button>';
+            }
+        ?>
+        
         <div id="content" style="display: none">
             <div class="feedback-box" id="feedback-box">
                 <?php
                 while ($row = $db->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<div><span>" . $row['comentario'] . "</span></div>";
+                    if($row['nome'] != null){
+                        echo "<div><p style='font-size: 14px'>" . $row['nome'] . "</p>";
+                        echo "<span>" . $row['comentario'] . "</span></div>";
+                    }else{
+                        echo "<div><p style='font-size: 14px'>Anônimo</p>";
+                        echo "<span>" . $row['comentario'] . "</span></div>";
+                    }
                 }
                 ?>
             </div>
             <form class="feedback-form" id="commentForm">
-                <input type="text" id="comment" placeholder="Comente algo..."></input>
+                <input type="text" id="comment" placeholder="Comente algo..." required></input>
                 <button id="newComment">Enviar</button>
             </form>
         </div>
