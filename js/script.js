@@ -1,6 +1,7 @@
 var aText = new Array(
   "< yCodes />",
-  "Bem Vindo"
+  "Bem Vindo",
+  "DESGRAAAAÇA"
 );
 var iSpeed = 100;
 var iIndex = 0;
@@ -10,30 +11,29 @@ var sContents = '';
 var destination = document.getElementById("typing");
 var y = 0;
 
-
 function typeDelete() {
   if (y <= 3) {
-      y++;
-      if (destination.innerHTML.substr(destination.innerHTML.length - 1) === "|") {
-          destination.innerHTML = destination.innerHTML.substr(0, destination.innerHTML.length - 1);
-          setTimeout("typeDelete()", 500);
-      } else {
-          destination.innerHTML += "|";
-          setTimeout("typeDelete()", 500);
-      }
+    y++;
+    if (destination.innerHTML.substr(destination.innerHTML.length - 1) === "|") {
+      destination.innerHTML = destination.innerHTML.substr(0, destination.innerHTML.length - 1);
+      setTimeout("typeDelete()", 500);
+    } else {
+      destination.innerHTML += "|";
+      setTimeout("typeDelete()", 500);
+    }
   } else {
-      if (destination.innerText.length > 0) {
-          destination.innerHTML = destination.innerText.substr(0, destination.innerText.length - 1);
-          setTimeout("typeDelete()", 200);
+    if (destination.innerText.length > 0) {
+      destination.innerHTML = destination.innerText.substr(0, destination.innerText.length - 1);
+      setTimeout("typeDelete()", 100);
+    } else {
+      if (iIndex < aText.length - 1) {
+        iIndex++;
       } else {
-          if (iIndex < aText.length - 1) {
-              iIndex++;
-          } else {
-              iIndex = 0;
-          }
-          y = 0;
-          typeWrite();
+        iIndex = 0;
       }
+      y = 0;
+      typeWrite();
+    }
   }
 }
 
@@ -41,34 +41,39 @@ function typeWrite() {
   sContents = ' ';
   destination.innerHTML = sContents + aText[iIndex].substring(0, iTextPos) + " |";
   if (iTextPos++ == iArrLength) {
-      iTextPos = 0;
-      typeDelete();
+    iTextPos = 0;
+    typeDelete();
   } else {
-      setTimeout("typeWrite()", iSpeed);
+    setTimeout("typeWrite()", iSpeed);
   }
 }
 setTimeout(typeWrite(), iSpeed);
 
 
-
-
-
-$('.feedback-button').click(() => {
+$(".feedback-button").click(() => {
   if (!$("#content").is(":visible")) {
-    $('.login-form').slideUp(() => {
-      $("#content").hide().load("feedback.php").delay(100).slideDown();
-    });
+    $(".user-form").slideToggle();
+    $("#content").delay(500).slideToggle();
+    $("#feedback-button").html("Voltar");
+    
+  }else{
+    $("#content").slideToggle();
+    $(".user-form").delay(500).slideToggle();
+    $("#feedback-button").html("Feedback Anônimo");
   }
-
 });
 
-$("#commentForm").submit(function (e) {
-  e.preventDefault();
+
+$(document).on('click', '#newComment', function(e){
+  e.preventDefault(e);
   $.ajax({
-    type: 'POST',
     url: 'controller/commentController.php',
-    data: $('#commentForm').serialize(),
-    success: function (data) {
+    type: 'POST',
+    data: {
+      'newComment': 'newComment',
+      'comment': $("#comment").val()
+    },
+    success: function(data){
       $('.feedback-box').append("<div><span>" + data + "</span></div>");
       $("#commentForm")[0].reset();
 
@@ -77,19 +82,65 @@ $("#commentForm").submit(function (e) {
         top: elem.scrollHeight, // Scroll the the end of the tabele's height
         behavior: 'smooth'
       });
-
-    },
-    error: function () {
-      console.log("Signup was unsuccessful");
     }
   });
-})
+});
 
+$(document).on('click', '#userLogin', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: 'controller/userController.php',
+    type: 'POST',
+    data: {
+      'userLogin': 'userLogin',
+      'user': $("#user").val(),
+      'pass': $("#pass").val()
+    },
+    success: function(data){
+      if(data === "1"){
+        $('#message').html("Logado com sucesso");
+        $('#message').slideDown();
+        $('#message').delay(2000).slideUp();
+      }else{
+        $('#message').html("Usuário incorreto");
+        $('#message').slideDown();
+        $('#message').delay(2000).slideUp();
+      }
+      $(".user-form")[0].reset();
+    },
+    error: function(data){
+      $('#message').html("Erro");
+      $('#message').slideDown();
+      $('#message').delay(2000).slideUp();
+      console.log(data);
+    }
+  });
+});
 
-
-
-
-
+$(document).on('click', '#userNew', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: 'controller/userController.php',
+    type: 'POST',
+    data: {
+      'userNew': 'userNew',
+      'user': $("#user").val(),
+      'pass': $("#pass").val()
+    },
+    success: function(data){
+      if(data === "1"){
+        $('#message').html("Cadastrado com sucesso");
+        $('#message').slideDown();
+        $('#message').delay(2000).slideUp();
+      }else{
+        $('#message').html("Usuário já existe");
+        $('#message').slideDown();
+        $('#message').delay(2000).slideUp();
+      }
+      $(".user-form")[0].reset();
+    }
+  });
+});
 
 
 

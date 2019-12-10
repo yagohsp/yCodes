@@ -35,6 +35,17 @@ body {
   position: relative;
 }
 
+.message{
+  display: none;
+  text-align: center;
+  background: rgb(80, 91, 247);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  color: #fff;
+  padding: 25px;
+  margin: 50px auto;
+  width: 250px;
+}
+
 @media screen and (min-width: 998px) {
   .container {
     max-width: 500px;
@@ -49,7 +60,6 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -57,15 +67,14 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.container >div{
-  width: 205px;
+.container >div:first-of-type{
+  height: 40px;
 }
 
 .container h1 {
-  text-align: left;
+  text-align: center;
   color: #fff;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .container >button{
@@ -181,15 +190,15 @@ div::-webkit-scrollbar-thumb:hover {
 /* Animação */
 /* Chegando */
 .container h1 {
-  animation: move 0.4s backwards;
+  animation: moveRight 0.4s backwards;
   animation-delay: 0.1s;
 }
 .container .login-form {
-  animation: move 0.4s backwards;
+  animation: moveRight 0.4s backwards;
   animation-delay: 0.2s;
 }
 .container button {
-  animation: move 0.4s backwards;
+  animation: moveRight 0.4s backwards;
   animation-delay: 0.3s;
 }
 .container .feedback-box div {
@@ -197,7 +206,29 @@ div::-webkit-scrollbar-thumb:hover {
   animation-delay: 0s;
 }
 
-@keyframes move {
+@keyframes moveDownIn {
+  from{
+    opacity: 0;
+    margin-top: -50px;
+  }
+  to {
+    margin-top: 50px;
+    opacity: 1;
+  }
+}
+
+@keyframes moveUpOut {
+  from{
+    opacity: 1;
+    margin-top: 50px;
+  }
+  to {
+    margin-top: -50px;
+    opacity: 0;
+  }
+}
+
+@keyframes moveRight {
   from {
     opacity: 0;
     transform: translateX(-35%);
@@ -207,6 +238,11 @@ div::-webkit-scrollbar-thumb:hover {
     transform: translateX(0%);
   }
 }
+
+@keyframes moveTop {
+
+}
+
 @keyframes fade {
   from {
     opacity: 0;
